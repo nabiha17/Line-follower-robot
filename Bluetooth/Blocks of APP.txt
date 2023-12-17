@@ -1,0 +1,8 @@
+Blocks:
+1)ListPicker-before Picking->ListPicker-Elements to->Bluetooth AddressNmaes(show available address and names)
+2)ListPicker-after Picking->ListPicker-Selection to->Bluetooth-connect address->list/blue->lp1 select(select lp1 from available address)
+3)B1->click->Blue-call bc1 send text->Text-F(forward)
+4)B2->click->Blue-call bc1 send text->Text-S(stop)
+5)B3->click->Blue-call bc1 send text->Text-B(bacward)
+6)B4->click->Blue-call bc1 send text->Text-L(left)
+7)B5->click->Blue-call bc1 send text->Text-R(right)

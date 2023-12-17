@@ -1,0 +1,144 @@
+#include <QTRSensors.h>
+QTRSensors qtr;//class created in lib,instant of Qtr
+const uint8_t SensorCount = 8;
+uint16_t sensorValues[SensorCount];
+//Set up the drive motor carrier pins
+int bphase1=7;
+int bphase = 8;
+int benbl = 6;
+
+int aphase = 5;
+int aphase1=4;
+int aenbl = 3;
+
+int mode=10;
+
+char t;
+
+boolean Ok = false;
+void setup() {
+  Serial.begin(9600);
+  qtr.setTypeAnalog();
+  //Set up the sensor array pins,arduino 8 pins connected with qtr sensor's output pin
+  qtr.setSensorPins((const uint8_t[]){A0, A1, A2, A3, A4, A5, A6, A7}, SensorCount);
+  qtr.setEmitterPin(2);//LEDON PIN
+
+  pinMode(aphase1, OUTPUT);
+  pinMode(aphase, OUTPUT);
+  pinMode(aenbl, OUTPUT);
+  pinMode(bphase, OUTPUT);
+  pinMode(bphase1, OUTPUT);
+  pinMode(benbl, OUTPUT);
+
+  pinMode(mode, INPUT);
+
+
+  delay(500);//input as millisec,wait for 500 ms
+  pinMode(LED_BUILTIN, OUTPUT);//make this pin(13) as output
+
+  
+  
+ // forward_brake(0, 0);
+}
+
+void calibration() {
+  digitalWrite(LED_BUILTIN, HIGH);//change state of pin13 as high,turn on Arduino's LED to indicate we are in calibration mode
+
+  for (uint16_t i = 0; i < 400; i++)
+  {
+    qtr.calibrate();
+  }
+  digitalWrite(LED_BUILTIN, LOW);
+}
+
+void loop() {
+ int Mode=digitalRead(mode);
+  /* if(Mode==1){
+    while (Ok == false) { //the loop won't start until the robot is calibrated
+      calibration(); //calibrate the robot for 10 seconds
+      Ok = true;
+  }
+    PID_control();
+     Serial.println("Maze robot");
+  }
+  else{*/
+    Serial.println("BLE robot");
+    if(Serial.available()){
+  t = Serial.read();
+  Serial.println(t);
+  if(t == 'F'){            //move forward(all motors rotate in forward direction)
+  forward();
+}
+ 
+else if(t == 'B'){      //move reverse (all motors rotate in reverse direction)
+  back();
+}
+else if(t == 'L'){      //move reverse (all motors rotate in reverse direction)
+  left();
+}
+else if(t == 'R'){      //move reverse (all motors rotate in reverse direction)
+  right();
+}
+else if(t == 'S'){      //move reverse (all motors rotate in reverse direction)
+  stops();
+}
+}
+  }
+  /*
+  else {
+    forward_brake(0,0);
+  }*/
+void forward_brake(int posa, int posb) {
+  //set the appropriate values for aphase and bphase so that the robot goes straight
+  digitalWrite(aphase, LOW);
+  digitalWrite(aphase1, HIGH);
+  digitalWrite(bphase, HIGH);
+  digitalWrite(bphase1, LOW);
+  analogWrite(aenbl, posa);
+  analogWrite(benbl, posb);
+}
+void forward() {
+  //set the appropriate values for aphase and bphase so that the robot goes straight
+  digitalWrite(aphase, LOW);
+  digitalWrite(aphase1, HIGH);
+  digitalWrite(bphase, HIGH);
+  digitalWrite(bphase1, LOW);
+  analogWrite(aenbl, 100);
+  analogWrite(benbl, 100);
+}
+void back() {
+  //set the appropriate values for aphase and bphase so that the robot goes straight
+  digitalWrite(aphase, HIGH);
+  digitalWrite(aphase1, LOW);
+  digitalWrite(bphase, LOW);
+  digitalWrite(bphase1, HIGH);
+  analogWrite(aenbl, 100);
+  analogWrite(benbl, 100);
+}
+void left() {
+  //set the appropriate values for aphase and bphase so that the robot goes straight
+  digitalWrite(aphase, LOW);
+  digitalWrite(aphase1, HIGH);
+  digitalWrite(bphase, HIGH);
+  digitalWrite(bphase1, LOW);
+  analogWrite(aenbl, 0);
+  analogWrite(benbl, 100);
+}
+void right() {
+  //set the appropriate values for aphase and bphase so that the robot goes straight
+  digitalWrite(aphase, LOW);
+  digitalWrite(aphase1, HIGH);
+  digitalWrite(bphase, HIGH);
+  digitalWrite(bphase1, LOW);
+  analogWrite(aenbl, 100);
+  analogWrite(benbl, 0);
+}
+void stops() {
+  //set the appropriate values for aphase and bphase so that the robot goes straight
+  digitalWrite(aphase, HIGH);
+  digitalWrite(aphase1, LOW);
+  digitalWrite(bphase, LOW);
+  digitalWrite(bphase1, HIGH);
+  analogWrite(aenbl, 0);
+  analogWrite(benbl, 0);
+}
